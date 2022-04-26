@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ResponseJsonResource;
 use App\Http\Resources\ResponseCollectionResource;
 
@@ -20,46 +21,71 @@ class SubjectController extends Controller
     }
 
     public function create(Request $request){
+        $validator = Validator::make($request->all(), [
+            "name" => "required",
+        ]);
+
+        if($validator->fails()){
+            return [
+                "status" => false,
+                "validate" => true,
+                "message" => $validator->errors()
+            ];
+        }
+
         try {
             $id = DB::connection($request->school)->table("subject")->insertGetId([
                 "name" => $request->name,
-                "campusId" => $request->campusId,
                 "description" => $request->description
             ]);
             return new ResponseJsonResource(
                 [
                     "status" => true,
                     "message" => "Subject created successfully",
-                     "id" => $id
+                    "validate" => false,
+
                 ]
             );
         } catch (Exception $e) {
             return new ResponseJsonResource([
                 "error" => $e->getMessage(),
                 "status" => false,
-                "message" => "Failed to create subject"
+                "message" => "Failed to create subject",
+                "validate" => false,
             ]);
         }
     }
 
     public function update(Request $request){
+        $validator = Validator::make($request->all(), [
+            "name" => "required",
+        ]);
+
+        if($validator->fails()){
+            return [
+                "status" => false,
+                "validate" => true,
+                "message" => $validator->errors()
+            ];
+        }
         try {
             DB::connection($request->school)->table("subject")->where(["id" => $request->id])->update([
                 "name" => $request->name,
-                "campusId" => $request->campusId,
                 "description" => $request->description
             ]);
             return new ResponseJsonResource(
                 [
                     "status" => true,
                     "message" => "Subject updated successfully",
+                    "validate" => false,
                 ]
             );
         } catch (Exception $e) {
             return new ResponseJsonResource([
                 "error" => $e->getMessage(),
                 "status" => false,
-                "message" => "Failed to update subject"
+                "message" => "Failed to update subject",
+                "validate" => false,
             ]);
         }
     }

@@ -29,7 +29,6 @@ class ClassController extends Controller
             "name" => "required",
             "arm" => "required",
             "section" => "required",
-            "description" => "required",
         ]);
         if($validator->fails()){
             return [
@@ -48,7 +47,8 @@ class ClassController extends Controller
                 "fee" => $request->fee,
                 "other_payment_title" => $request->other_payment_title,
                 "amount" => $request->amount,
-                "description" => $request->description
+                "description" => $request->description,
+                "sub" => serialize(["null"]),
             ]);
             return new ResponseJsonResource(
                 [
@@ -77,7 +77,6 @@ class ClassController extends Controller
             "name" => "required",
             "arm" => "required",
             "section" => "required",
-            "description" => "required",
         ]);
 
         if($validator->fails()){
@@ -97,7 +96,7 @@ class ClassController extends Controller
                 "fee" => $request->fee,
                 "other_payment_title" => $request->other_payment_title,
                 "amount" => $request->amount,
-                "description" => $request->description
+                "description" => $request->description,
             ]);
             return new ResponseJsonResource(
                 [
