@@ -425,7 +425,7 @@ class PeopleController extends Controller
                         "status" => true,
                         "message" => "User created successfully",
                         "id" => $id,
-                "validate" => false,
+                        "validate" => false,
                     ];
             }else{
                 return [

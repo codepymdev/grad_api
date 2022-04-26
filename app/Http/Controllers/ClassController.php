@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Resources\ResponseCollectionResource;
-use App\Http\Resources\ResponseJsonResource;
 use Whoops\Handler\JsonResponseHandler;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\ResponseJsonResource;
+use App\Http\Resources\ResponseCollectionResource;
 
 class ClassController extends Controller
 {
@@ -21,6 +22,23 @@ class ClassController extends Controller
     }
 
     public function create(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            "school" => "required",
+            "campusId" => "required",
+            "name" => "required",
+            "arm" => "required",
+            "section" => "required",
+            "description" => "required",
+        ]);
+        if($validator->fails()){
+            return [
+                "status" => false,
+                "validate" => true,
+                "message" => $validator->errors()
+            ];
+        }
+
         try {
             $id = DB::connection($request->school)->table("class")->insertGetId([
                 "name" => $request->name,
@@ -36,19 +54,40 @@ class ClassController extends Controller
                 [
                     "status" => true,
                     "message" => "Class created successfully",
-                     "id" => $id
+                     "id" => $id,
+                     "validate" => false,
                 ]
             );
         } catch (Exception $e) {
             return new ResponseJsonResource([
                 "error" => $e->getMessage(),
                 "status" => false,
+                "validate" => false,
                 "message" => "Failed to create class"
             ]);
         }
     }
 
     public function update(Request $request){
+
+
+        $validator = Validator::make($request->all(), [
+            "school" => "required",
+            "campusId" => "required",
+            "name" => "required",
+            "arm" => "required",
+            "section" => "required",
+            "description" => "required",
+        ]);
+
+        if($validator->fails()){
+            return [
+                "status" => false,
+                "validate" => true,
+                "message" => $validator->errors()
+            ];
+        }
+
         try {
             DB::connection($request->school)->table("class")->where(["id" => $request->id])->update([
                 "name" => $request->name,
@@ -64,13 +103,15 @@ class ClassController extends Controller
                 [
                     "status" => true,
                     "message" => "Class updated successfully",
+                    "validate" => false,
                 ]
             );
         } catch (Exception $e) {
             return new ResponseJsonResource([
                 "error" => $e->getMessage(),
                 "status" => false,
-                "message" => "Failed to update class"
+                "message" => "Failed to update class",
+                "validate" => false,
             ]);
         }
     }

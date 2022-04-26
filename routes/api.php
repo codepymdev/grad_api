@@ -123,6 +123,5 @@ Route::group(["prefix" => "subjects"], function(){
     Route::post("/update", [SubjectController::class, "update"]);
     Route::delete("/delete/{school}/{id}", [SubjectController::class, "delete"]);
     Route::get("/subject-categories/{school}", [SubjectController::class, "subjectCat"]);
-
 });
 
