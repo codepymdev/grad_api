@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Http\Classes\AppStream;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -147,6 +147,23 @@ class PeopleController extends Controller
     }
 
     private function _createStudent($request){
+
+        $validator = Validator::make($request->all(), [
+            "first_name" => "required",
+            "last_name" => "required",
+            "campus" => "required",
+            "gender" => "required",
+            "school" => "required",
+        ]);
+
+        if($validator->fails()){
+            return [
+                "status" => false,
+                "validate" => true,
+                "message" => $validator->errors()
+            ];
+        }
+
         /**
          * generate reg number
          */
@@ -179,22 +196,52 @@ class PeopleController extends Controller
                     "email" => randomString(),
                 ]
             );
+            //create class student record
+            if($id){
+                DB::connection($request->school)->table("classstudent")->insert(
+                    [
+                        "userId" => $id,
+                        "classId" => $request->classId,
+                        "subjects" => serialize(["null"]),
+                    ]
+                );
+                $this->_updateStreamToken($id, $request->first_name, $request->school);
 
+            }
             return [
                 "status" => true,
                 "message" => "Student created successfully",
                 "id" => $id,
+                "validate" => false,
             ];
         } catch (Exception $e) {
             return [
                 "status" => false,
                 "message" => "Error creating student",
                 "error" => $e,
+                "validate" => false,
             ];
         }
     }
 
     private function _createTeaching($request){
+
+        $validator = Validator::make($request->all(), [
+            "email" => "required|email|unique:users,email",
+            "first_name" => "required",
+            "last_name" => "required",
+            "campus" => "required",
+            "gender" => "required",
+            "school" => "required",
+        ]);
+
+        if($validator->fails()){
+            return [
+                "status" => false,
+                "validate" => true,
+                "message" => $validator->errors()
+            ];
+        }
         try {
 
 
@@ -231,17 +278,18 @@ class PeopleController extends Controller
                             "url" => getConfigValue($request->school, "app_url") . '?route=create-account&token=' . $email_token,
                         ]
                     ));
-
+                    $this->_updateStreamToken($id, $request->first_name, $request->school);
                     return [
                         "status" => true,
                         "message" => "Teacher created successfully",
                         "id" => $id,
+                        "validate" => false,
                     ];
             }else{
                 return [
                     "status" => false,
                     "message" => "Email already used",
-
+                    "validate" => false,
                 ];
             }
         } catch (Exception $e) {
@@ -249,10 +297,29 @@ class PeopleController extends Controller
                 "status" => false,
                 "message" => "Error creating teacher",
                 "error" => $e,
+                "validate" => false,
             ];
         }
     }
     private function _createNonTeaching($request){
+
+        $validator = Validator::make($request->all(), [
+            "email" => "required|email|unique:users,email",
+            "first_name" => "required",
+            "last_name" => "required",
+            "campus" => "required",
+            "gender" => "required",
+            "school" => "required",
+        ]);
+
+        if($validator->fails()){
+            return [
+                "status" => false,
+                "validate" => true,
+                "message" => $validator->errors()
+            ];
+        }
+
         try {
 
             $email = strtolower($request->email);
@@ -264,7 +331,7 @@ class PeopleController extends Controller
                     [
                         "email" => $email,
                         "type" => "non-teaching",
-                        "roleId" => $request->role,
+                        "roleId" => $request->roleId,
                         "first_name" => $request->first_name,
                         "last_name" => $request->last_name,
                         "middle_name" => $request->middle_name,
@@ -288,28 +355,49 @@ class PeopleController extends Controller
                             "url" => getConfigValue($request->school, "app_url") . '?route=create-account&token=' . $email_token,
                         ]
                     ));
-
+                    $this->_updateStreamToken($id, $request->first_name, $request->school);
                     return [
                         "status" => true,
                         "message" => "Staff created successfully",
                         "id" => $id,
+                        "validate" => false,
                     ];
             }else{
                 return [
                     "status" => false,
                     "message" => "Email already used",
-
+                    "validate" => false,
                 ];
             }
         } catch (Exception $e) {
             return [
                 "status" => false,
-                "message" => "Error creating teacher",
+                "message" => "Error creating Staff",
                 "error" => $e,
+                "validate" => false,
             ];
         }
     }
     private function _createParent($request){
+
+        $validator = Validator::make($request->all(), [
+            "email" => "required|email|unique:users,email",
+            "first_name" => "required",
+            "last_name" => "required",
+            "campus" => "required",
+            "gender" => "required",
+            "school" => "required",
+        ]);
+
+        if($validator->fails()){
+            return [
+                "status" => false,
+                "validate" => true,
+                "message" => $validator->errors()
+            ];
+        }
+
+
         try {
 
             $email = strtolower($request->email);
@@ -345,16 +433,18 @@ class PeopleController extends Controller
                             "url" => getConfigValue($request->school, "app_url") . '?route=create-account&token=' . $email_token,
                         ]
                     ));
-
+                    $this->_updateStreamToken($id, $request->first_name, $request->school);
                     return [
                         "status" => true,
                         "message" => "Parent created successfully",
                         "id" => $id,
+                        "validate" => false,
                     ];
             }else{
                 return [
                     "status" => false,
                     "message" => "Email already used",
+                    "validate" => false,
 
                 ];
             }
@@ -363,6 +453,7 @@ class PeopleController extends Controller
                 "status" => false,
                 "message" => "Error creating teacher",
                 "error" => $e,
+                "validate" => false,
             ];
         }
     }
@@ -421,6 +512,9 @@ class PeopleController extends Controller
                             "url" => getConfigValue($request->school, "app_url") . '?route=create-account&token=' . $email_token,
                         ]
                     ));
+
+                    $this->_updateStreamToken($id, $request->first_name, $request->school);
+
                     return [
                         "status" => true,
                         "message" => "User created successfully",
@@ -464,6 +558,7 @@ class PeopleController extends Controller
             $data = [
                 "status" => false,
                 "message" => "Invalid type",
+                "validate" => false,
             ];
 
         }
@@ -472,6 +567,23 @@ class PeopleController extends Controller
 
 
     private function _updateStudent($request){
+
+        $validator = Validator::make($request->all(), [
+            "first_name" => "required",
+            "last_name" => "required",
+            "campus" => "required",
+            "gender" => "required",
+            "school" => "required",
+        ]);
+
+        if($validator->fails()){
+            return [
+                "status" => false,
+                "validate" => true,
+                "message" => $validator->errors()
+            ];
+        }
+
 
         /*-----------------------------------------------------------------------------
         # Bcrypt the user's password // NOTE: The First and Last Name
@@ -504,17 +616,36 @@ class PeopleController extends Controller
             return [
                 "status" => true,
                 "message" => "Student updated successfully",
+                "validate" => false,
             ];
         } catch (Exception $e) {
             return [
                 "status" => false,
                 "message" => "Error updating student",
                 "error" => $e,
+                "validate" => false,
             ];
         }
     }
 
     private function _updateTeaching($request){
+
+        $validator = Validator::make($request->all(), [
+            "first_name" => "required",
+            "last_name" => "required",
+            "campus" => "required",
+            "gender" => "required",
+            "school" => "required",
+        ]);
+
+        if($validator->fails()){
+            return [
+                "status" => false,
+                "validate" => true,
+                "message" => $validator->errors()
+            ];
+        }
+
         try {
 
 
@@ -536,23 +667,41 @@ class PeopleController extends Controller
                 return [
                     "status" => true,
                     "message" => "Teacher updated successfully",
+                    "validate" => false,
                 ];
         } catch (Exception $e) {
             return [
                 "status" => false,
                 "message" => "Error creating teacher",
                 "error" => $e,
+                "validate" => false,
             ];
         }
     }
     private function _updateNonTeaching($request){
+
+        $validator = Validator::make($request->all(), [
+            "first_name" => "required",
+            "last_name" => "required",
+            "campus" => "required",
+            "gender" => "required",
+            "school" => "required",
+        ]);
+
+        if($validator->fails()){
+            return [
+                "status" => false,
+                "validate" => true,
+                "message" => $validator->errors()
+            ];
+        }
         try {
 
 
             DB::connection($request->school)->table("users")->where(["id" => $request->id])->update(
                 [
                     "type" => "non-teaching",
-                    "roleId" => $request->role,
+                    "roleId" => $request->roleId,
                     "first_name" => $request->first_name,
                     "last_name" => $request->last_name,
                     "middle_name" => $request->middle_name,
@@ -567,17 +716,34 @@ class PeopleController extends Controller
                 return [
                     "status" => true,
                     "message" => "Staff updated successfully",
+                    "validate" => false
                 ];
         } catch (Exception $e) {
             return [
                 "status" => false,
                 "message" => "Error creating teacher",
                 "error" => $e,
+                "validate" => false,
             ];
         }
     }
 
     private function _updateParent($request){
+        $validator = Validator::make($request->all(), [
+            "first_name" => "required",
+            "last_name" => "required",
+            "campus" => "required",
+            "gender" => "required",
+            "school" => "required",
+        ]);
+
+        if($validator->fails()){
+            return [
+                "status" => false,
+                "validate" => true,
+                "message" => $validator->errors()
+            ];
+        }
         try {
 
             DB::connection($request->school)->table("users")->where(["id" => $request->id])->update(
@@ -597,17 +763,39 @@ class PeopleController extends Controller
                 return [
                     "status" => true,
                     "message" => "Parent updated successfully",
+                    "validate" => false,
                 ];
         } catch (Exception $e) {
             return [
                 "status" => false,
                 "message" => "Error updating parent",
                 "error" => $e,
+                "validate" => false,
+
             ];
         }
     }
 
     private function _updateUser($request){
+
+        $validator = Validator::make($request->all(), [
+            "first_name" => "required",
+            "last_name" => "required",
+            "campus" => "required",
+            "gender" => "required",
+            "roleId" => "required",
+            "type" => "required",
+            "school" => "required",
+        ]);
+
+        if($validator->fails()){
+            return [
+                "status" => false,
+                "validate" => true,
+                "message" => $validator->errors()
+            ];
+        }
+
         try {
 
             DB::connection($request->school)->table("users")->where(["id" => $request->id])->update(
@@ -628,12 +816,14 @@ class PeopleController extends Controller
                 return [
                     "status" => true,
                     "message" => "User updated successfully",
+                    "validate" => false,
                 ];
         } catch (Exception $e) {
             return [
                 "status" => false,
                 "message" => "Error updating parent",
                 "error" => $e,
+                "validate" => false,
             ];
         }
     }
@@ -679,5 +869,14 @@ class PeopleController extends Controller
                     "message" => "Oops, there was an error. Please try again later."
                 ]);
         }
+    }
+
+
+    private function _updateStreamToken($id, $firstname, $school){
+        //update stream token
+        DB::connection($school)->table("users")->where("id", $id)->update(
+            [
+                "token" => AppStream::generateToken($firstname."_".$id),
+            ]);
     }
 }

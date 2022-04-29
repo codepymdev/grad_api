@@ -98,6 +98,7 @@ class LoginController extends Controller
                                     "campus" => $user->campus,
                                     "status" => $user->status,
                                     "rating" => $user->rating,
+                                    "token" => $user->token,
                                 ],
                             ];
                         }else{

@@ -10,6 +10,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PeopleController;
 use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\StreamController;
 use App\Http\Controllers\SubjectController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -125,3 +126,4 @@ Route::group(["prefix" => "subjects"], function(){
     Route::get("/subject-categories/{school}", [SubjectController::class, "subjectCat"]);
 });
 
+Route::get("/stream/{school}", [StreamController::class, "stream"]);
