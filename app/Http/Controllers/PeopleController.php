@@ -205,7 +205,7 @@ class PeopleController extends Controller
                         "subjects" => serialize(["null"]),
                     ]
                 );
-                $this->_updateStreamToken($id, $request->first_name, $request->school);
+                $this->_updateStreamToken($id, $request->first_name, $request->last_name, $request->school);
 
             }
             return [
@@ -278,7 +278,7 @@ class PeopleController extends Controller
                             "url" => getConfigValue($request->school, "app_url") . '?route=create-account&token=' . $email_token,
                         ]
                     ));
-                    $this->_updateStreamToken($id, $request->first_name, $request->school);
+                    $this->_updateStreamToken($id, $request->first_name, $request->last_name, $request->school);
                     return [
                         "status" => true,
                         "message" => "Teacher created successfully",
@@ -355,7 +355,7 @@ class PeopleController extends Controller
                             "url" => getConfigValue($request->school, "app_url") . '?route=create-account&token=' . $email_token,
                         ]
                     ));
-                    $this->_updateStreamToken($id, $request->first_name, $request->school);
+                    $this->_updateStreamToken($id, $request->first_name, $request->last_name, $request->school);
                     return [
                         "status" => true,
                         "message" => "Staff created successfully",
@@ -433,7 +433,7 @@ class PeopleController extends Controller
                             "url" => getConfigValue($request->school, "app_url") . '?route=create-account&token=' . $email_token,
                         ]
                     ));
-                    $this->_updateStreamToken($id, $request->first_name, $request->school);
+                    $this->_updateStreamToken($id, $request->first_name, $request->last_name, $request->school);
                     return [
                         "status" => true,
                         "message" => "Parent created successfully",
@@ -513,7 +513,7 @@ class PeopleController extends Controller
                         ]
                     ));
 
-                    $this->_updateStreamToken($id, $request->first_name, $request->school);
+                    $this->_updateStreamToken($id, $request->first_name, $request->last_name, $request->school);
 
                     return [
                         "status" => true,
@@ -872,11 +872,16 @@ class PeopleController extends Controller
     }
 
 
-    private function _updateStreamToken($id, $firstname, $school){
-        //update stream token
-        DB::connection($school)->table("users")->where("id", $id)->update(
+    private function _updateStreamToken($id, $firstname, $lastname,  $school){
+        //check if token is null
+        $check = DB::connection($school)->table("users")->where(["id" => $id])->whereNull("token")->count();
+        if($check > 0){
+          //update stream token
+          DB::connection($school)->table("users")->where("id", $id)->update(
             [
-                "token" => AppStream::generateToken($firstname."_".$id),
+                "token" => AppStream::generateToken($firstname."_".$id, $firstname .' '. $lastname, "" ),
             ]);
+        }
+
     }
 }
