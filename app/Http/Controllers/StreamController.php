@@ -13,6 +13,7 @@ class StreamController extends Controller
         foreach ($users as $user) {
             DB::connection($school)->table("users")->where('id', $user->id)->update(['token' => AppStream::generateToken($user->first_name ."_".$user->id, $user->first_name .' '. $user->last_name , $user->avatar)]);
         }
+
         $_users = DB::connection($school)->table('users')->get();
         return response()->json($_users);
     }
