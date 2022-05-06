@@ -81,6 +81,11 @@ function getClassTeacher($userId, $school){
     return DB::connection($school)->table("classteacher")->where(["userId" => $userId])->first();
 }
 
+function getSubjectName($school, $subjectId){
+    $subject = DB::connection($school)->table("subject")->where(["id" => $subjectId])->first();
+    return $subject->name;
+}
+
 function getUser($userId, $school){
     $count = DB::connection($school)->table("users")->where(["id" => $userId])->count();
     if($count == 0) return [];

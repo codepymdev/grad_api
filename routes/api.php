@@ -1,19 +1,21 @@
 <?php
 
-use App\Http\Controllers\AccountController;
-use App\Http\Controllers\AnnouncementController;
-use App\Http\Controllers\ClassController;
-use App\Http\Controllers\CounterController;
-use App\Http\Controllers\EventController;
-use App\Http\Controllers\ForgotPasswordController;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\PeopleController;
-use App\Http\Controllers\SchoolController;
-use App\Http\Controllers\SettingsController;
-use App\Http\Controllers\StreamController;
-use App\Http\Controllers\SubjectController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ClassController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PeopleController;
+use App\Http\Controllers\ResultController;
+use App\Http\Controllers\SchoolController;
+use App\Http\Controllers\StreamController;
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\CounterController;
+use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\ForgotPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -126,4 +128,17 @@ Route::group(["prefix" => "subjects"], function(){
     Route::get("/subject-categories/{school}", [SubjectController::class, "subjectCat"]);
 });
 
+/// results
+Route::group(["prefix" => "results"], function() {
+    Route::get("/class-subjects/{school}/{classId}", [ResultController::class, "classSubjects"]);
+});
+
+/// attendance
+Route::group(["prefix" => "attendance"], function(){
+    Route::post("/get", [AttendanceController::class, "get"]);
+    Route::post("/create", [AttendanceController::class, "create"]);
+    Route::delete("/delete/{school}/{id}", [AttendanceController::class, "delete"]);
+});
+
+/// update stream
 Route::get("/stream/{school}", [StreamController::class, "stream"]);

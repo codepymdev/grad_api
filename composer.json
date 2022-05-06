@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",
+        "auth0/login": "^7.0",
         "fruitcake/laravel-cors": "^2.0",
         "get-stream/stream-chat": "^2.10",
         "guzzlehttp/guzzle": "^7.0.1",
