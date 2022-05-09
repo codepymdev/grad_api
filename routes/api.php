@@ -136,6 +136,7 @@ Route::group(["prefix" => "results"], function() {
 /// attendance
 Route::group(["prefix" => "attendance"], function(){
     Route::post("/get", [AttendanceController::class, "get"]);
+    Route::post("/getAttendance", [AttendanceController::class, "getAttendance"]);
     Route::post("/create", [AttendanceController::class, "create"]);
     Route::delete("/delete/{school}/{id}", [AttendanceController::class, "delete"]);
 });
