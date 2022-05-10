@@ -130,7 +130,7 @@ Route::group(["prefix" => "subjects"], function(){
 
 /// results
 Route::group(["prefix" => "results"], function() {
-    Route::get("/class-subjects/{school}/{classId}", [ResultController::class, "classSubjects"]);
+    Route::post("/currentResult", [ResultController::class, "currentResult"]);
 });
 
 /// attendance

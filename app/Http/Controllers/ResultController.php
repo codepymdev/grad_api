@@ -2,31 +2,63 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\ResponseJsonResource;
 use Exception;
+use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ResultController extends Controller
 {
-    public function classSubjects($school, $classId){
-        $subjects = [];
-        try {
+    public function currentResult(Request $request){
 
-            $class = DB::connection($school)->table("class")->where(['id' => $classId])->first();
-            $subs = unserialize($class->sub);
-            for ($i=0; $i < count($subs); $i++) {
-                if($subs[$i] == "null") continue;
-                $_subj['name'] = getSubjectName($school, $subs[$i]);
-                $_subj['id'] = $subs[$i];
-                $subjects[] = $_subj;
+        $count = DB::connection($request->school)->table('result')
+        // ->where([
+        //     [
+        //         'classId' => $request->classId,
+        //         'campusId' => $request->campusId,
+        //         "term" => $request->term,
+        //         "year" => $request->year,
+        //         'userId' => $request->userId,
+        //     ],
+        // ])
+        ->count();
+
+        if($count > 0){
+            if($request->school == "fkka"){
+                $this->_fkkaResult($request);
+            }else if($request->school == "golden"){
+
+            }else if($request->school == "victory"){
+            }else if($request->school == "kings"){
+
             }
-            return new ResponseJsonResource($subjects);
-        } catch (Exception $e) {
-            return new ResponseJsonResource( [
-                "status" => false,
-                "message" => "Oops, there was an error try again!",
-                "error" => $e->getMessage(),
-            ]);
+        }
+    }
+
+
+
+
+    private function _fkkaResult($request){
+            $data = DB::connection($request->school)->table('result')
+            // ->where([
+            //     [
+            //         'classId' => $request->classId,
+            //         'campusId' => $request->campusId,
+            //         "term" => $request->term,
+            //         "year" => $request->year,
+            //         'userId' => $request->userId,
+            //     ],
+            // ])
+            ->limit(5)
+            ->get()
+            ->toArray();
+        if ($data) {
+            $pdf = PDF::loadView('results.fkka.index', $data);
+            $pdf->setPaper('A4', 'portrait');
+            $fileName = 'export-'. date('m-d-Y-His').'.pdf';
+            Storage::put('public/uploads/datas/downloads/'.$fileName, $pdf->output());
+            return $fileName;
         }
     }
 }
