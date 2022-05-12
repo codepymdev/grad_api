@@ -131,6 +131,8 @@ Route::group(["prefix" => "subjects"], function(){
 /// results
 Route::group(["prefix" => "results"], function() {
     Route::post("/currentResult", [ResultController::class, "currentResult"]);
+    Route::get("/download-result/{file}", [ResultController::class, "downloadResult"]);
+    Route::get("/getClasses/{school}/{campus}/{r}", [ResultController::class, "getClasses"]);
 });
 
 /// attendance

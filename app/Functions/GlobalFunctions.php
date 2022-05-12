@@ -163,4 +163,27 @@ function generateToken( $chars=10 ){
     for ($i=0; $i < $chars; $i++) { $randstring .= $characters[rand(0, strlen($characters) - 1)]; }
     return $randstring;
 }
+
+function convertTerm($value){
+    switch ($value) {
+        case '1':
+            return 'First Term';
+            break;
+        case '2':
+            return 'Second Term';
+            break;
+        case '3':
+            return 'Third Term';
+            break;
+    }
+}
+
+   /**
+ * @param string $s
+ * @return string
+ * return date
+ */
+function _date( $s ){
+    return strftime('%b %e, %Y',strtotime( $s ));
+  }
 ?>
