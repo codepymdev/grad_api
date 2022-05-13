@@ -84,7 +84,7 @@ class EventController extends Controller
                 "end_date" => $request->end_date,
                 "userId" => $request->userId,
             ]);
-
+            sendSignalNotification("Event!! " . $request->title, " New Event - " . $request->description . " Start Date: " . $request->start_date . ' End Date: ' . $request->end_date);
             return [
                 "status" => true,
                 "message" => "success",
@@ -131,6 +131,8 @@ class EventController extends Controller
                 "start_date" => $request->start_date,
                 "end_date" => $request->end_date,
             ]);
+
+            sendSignalNotification("Event Updated!! " . $request->title, "Event - " . $request->description . " Start Date: " . $request->start_date . ' End Date: ' . $request->end_date);
 
             return $this->handler([
                 "status" => true,

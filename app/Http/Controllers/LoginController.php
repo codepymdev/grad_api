@@ -75,6 +75,13 @@ class LoginController extends Controller
                     if($user->status == "2"){
                         if(Hash::check($password, $user->password) == true || Hash::check($password, $user->l_password) == true){
                             recent_activity($user->id, $school, "Account Login successful", "login", "Account Login");
+                            //set one signal token if null
+                            if($user->oneSignalToken == null){
+                                $oneSignalToken = oneSignalToken($user->id);
+                                DB::connection($school)->table("users")->where(["id" => $user->id])->update([
+                                    "oneSignalToken" => $oneSignalToken
+                                ]);
+                            }
                             return [
                                 "status" => true,
                                 "message" => "success",
@@ -99,6 +106,7 @@ class LoginController extends Controller
                                     "status" => $user->status,
                                     "rating" => $user->rating,
                                     "token" => $user->token,
+                                    "oneSignalToken" => $user->oneSignalToken,
                                 ],
                             ];
                         }else{

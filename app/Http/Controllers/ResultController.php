@@ -175,7 +175,7 @@ class ResultController extends Controller
         $headers = array(
             'Content-Type: application/pdf',
           );
-
+        sendSignalNotification("Result!!", "Result downloading................");
         return response()->download($file, "result.pdf", $headers);
     }
 

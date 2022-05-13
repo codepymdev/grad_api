@@ -102,6 +102,13 @@ class ForgotPasswordController extends Controller
                     DB::connection($school)->table("users")->where(["email" => $email])->update(["password" => $hash_pass, "recovery_code" => null,]);
 
                     recent_activity($user->id, $school, "You reset your account password", "reset_password", "Reset Password");
+                    //set one signal token if null
+                    if($user->oneSignalToken == null){
+                        $oneSignalToken = oneSignalToken($user->id);
+                        DB::connection($school)->table("users")->where(["id" => $user->id])->update([
+                            "oneSignalToken" => $oneSignalToken
+                        ]);
+                    }
                     return [
                         "status" => true,
                         "message" => "success",
@@ -126,6 +133,7 @@ class ForgotPasswordController extends Controller
                             "status" => $user->status,
                             "rating" => $user->rating,
                             "token" => $user->token,
+                            "oneSignalToken" => $user->oneSignalToken,
                         ],
                     ];
                 }else{

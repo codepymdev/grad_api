@@ -22,6 +22,7 @@ class AnnouncementController extends Controller
         $count = DB::connection($school)->table("announcements")->where("pinned", "1")->count();
         if($count != 0){
             $announcement = DB::connection($school)->table("announcements")->where("pinned", "1")->first();
+
             return $this->_handler([
                 "id" => $announcement->id,
                 "type" => $announcement->type,
@@ -46,6 +47,7 @@ class AnnouncementController extends Controller
                 //remove others from pin
                 DB::connection($request->school)->table("announcements")->whereNotIn("id", [$lastId])->update(["pinned" => "0"]);
             }
+            sendSignalNotification("Announcement!!", $request->message);
             return $this->_handler([
                 "status" => true,
                 "message" => "Announcement created successfully"
@@ -61,6 +63,7 @@ class AnnouncementController extends Controller
                 "type" => $request->type,
                 "message" => $request->message,
             ]);
+            sendSignalNotification("Announcement!!", $request->message);
             return $this->_handler([
                 "message" => "Announcement updated successfully",
                 "status" => true,
@@ -91,6 +94,8 @@ class AnnouncementController extends Controller
             DB::connection($request->school)->table("announcements")->whereNotIn("id", [$request->id])->update([
                 "pinned" => "0",
             ]);
+            $pin = DB::connection($request->school)->table("announcements")->where("id", $request->id)->first();
+            sendSignalNotification("Announcement!!", $pin->message);
             return $this->_handler([
                 "message" => "Announcement pinned successfully",
                 "status" => true,

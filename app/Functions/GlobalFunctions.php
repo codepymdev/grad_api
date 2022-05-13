@@ -1,11 +1,11 @@
 <?php
 
 use App\Models\School;
-use Illuminate\Support\Facades\DB;
+
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Pagination\LengthAwarePaginator;
-
 /**
  * check status
  */
@@ -185,5 +185,46 @@ function convertTerm($value){
  */
 function _date( $s ){
     return strftime('%b %e, %Y',strtotime( $s ));
+  }
+
+function sendSignalNotification($headings, $message){
+        $content = array(
+            "en" => $message
+        );
+        $headings = array(
+            "en" => $headings
+        );
+
+        $fields = array(
+            'app_id' => env('ONESIGNAL_APP_ID'),
+            'included_segments' => array(
+                'Subscribed Users'
+            ),
+            'contents' => $content,
+            'headings' => $headings,
+        );
+
+        $fields = json_encode($fields);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://onesignal.com/api/v1/notifications");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json; charset=utf-8',
+            'Authorization: Basic ' . env('ONESIGNAL_REST_API_KEY')
+        ));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_HEADER, FALSE);
+        curl_setopt($ch, CURLOPT_POST, TRUE);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+    return json_decode($response, true);
+ }
+
+  function oneSignalToken($identifier){
+      return hash_hmac('sha256', $identifier, env('ONESIGNAL_REST_API_KEY'));
   }
 ?>

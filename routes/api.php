@@ -13,6 +13,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CounterController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\OneSignalController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\ForgotPasswordController;
@@ -145,3 +146,5 @@ Route::group(["prefix" => "attendance"], function(){
 
 /// update stream
 Route::get("/stream/{school}", [StreamController::class, "stream"]);
+//one signal
+Route::get("/onesignal", [OneSignalController::class, "send"]);
