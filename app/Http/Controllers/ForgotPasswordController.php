@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Http\Resources\ForgotPasswordResource;
+use App\Http\Classes\AppStream;
 use App\Mail\RecoveryPasswordCode;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Resources\ForgotPasswordResource;
 
 class ForgotPasswordController extends Controller
 {
@@ -103,11 +104,19 @@ class ForgotPasswordController extends Controller
 
                     recent_activity($user->id, $school, "You reset your account password", "reset_password", "Reset Password");
                     //set one signal token if null
+                    $oneSignalToken = $user->oneSignalToken;
                     if($user->oneSignalToken == null){
                         $oneSignalToken = oneSignalToken($user->id);
                         DB::connection($school)->table("users")->where(["id" => $user->id])->update([
                             "oneSignalToken" => $oneSignalToken
                         ]);
+                    }
+
+                    //set stream token if null
+                    $streamToken = $user->token;
+                    if($user->token == null){
+                        $streamToken = AppStream::generateToken($school ."_".$user->id, $user->first_name .' '. $user->last_name , $user->avatar);
+                        DB::connection($school)->table("users")->where('id', $user->id)->update(['token' => $streamToken ]);
                     }
                     return [
                         "status" => true,
@@ -132,8 +141,8 @@ class ForgotPasswordController extends Controller
                             "campus" => $user->campus,
                             "status" => $user->status,
                             "rating" => $user->rating,
-                            "token" => $user->token,
-                            "oneSignalToken" => $user->oneSignalToken,
+                            "token" => $streamToken,
+                            "oneSignalToken" => $oneSignalToken,
                         ],
                     ];
                 }else{

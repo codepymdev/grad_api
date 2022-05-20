@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\LoginResource;
 use App\Models\School;
 use Illuminate\Http\Request;
+use App\Http\Classes\AppStream;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Resources\LoginResource;
 
 class LoginController extends Controller
 {
@@ -76,11 +77,19 @@ class LoginController extends Controller
                         if(Hash::check($password, $user->password) == true || Hash::check($password, $user->l_password) == true){
                             recent_activity($user->id, $school, "Account Login successful", "login", "Account Login");
                             //set one signal token if null
+                            $oneSignalToken = $user->oneSignalToken;
                             if($user->oneSignalToken == null){
                                 $oneSignalToken = oneSignalToken($user->id);
                                 DB::connection($school)->table("users")->where(["id" => $user->id])->update([
                                     "oneSignalToken" => $oneSignalToken
                                 ]);
+                            }
+
+                            //set stream token if null
+                            $streamToken = $user->token;
+                            if($user->token == null){
+                                $streamToken = AppStream::generateToken($school ."_".$user->id, $user->first_name .' '. $user->last_name , $user->avatar);
+                                DB::connection($school)->table("users")->where('id', $user->id)->update(['token' => $streamToken ]);
                             }
                             return [
                                 "status" => true,
@@ -105,8 +114,8 @@ class LoginController extends Controller
                                     "campus" => $user->campus,
                                     "status" => $user->status,
                                     "rating" => $user->rating,
-                                    "token" => $user->token,
-                                    "oneSignalToken" => $user->oneSignalToken,
+                                    "token" => $streamToken,
+                                    "oneSignalToken" => $oneSignalToken,
                                 ],
                             ];
                         }else{
