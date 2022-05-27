@@ -77,5 +77,26 @@ Using this endpoint `https://grad.fkkas.com/api/auth/login`
 To recover your password you will send a `POST` request passing the following parameters 
 - Email Address 
 - School `school name` 
-Using this endpoint `https://grad.fkkas.com/api/auth/forgot-password`
 
+Using this endpoint `https://grad.fkkas.com/api/auth/forgot-password` 
+
+## People 
+Getting people i.e Admin, Students, Parents and Staffs you have to send a `GET` request to the following endpoint `https://grad.fkkas.com/api/people/get/school/campus/role/type/per_page/page` 
+where the following will be explained further. 
+- School `school name` 
+- Campus: some school come with different campus for you to get the details of the particular campus you want you pass the campus id  
+- Role: You pass the role type of the current user i.e `admin, student, teaching, no-teaching, parent` 
+- Type: The type of users you are fetching either students, parents or staffs 
+- Per page: Number of record to show in a page, this is good for pagination 
+- Page: What page you want to fetch 
+
+
+## Conclusion 
+Grad is an open api for those having interest in building a school management software. All you will do is use the API to make all your request you want and don't worry about others, we will do the job for you. 
+You can also download the Grad mobile app <a href="#">here</a>. 
+
+## Contact 
+Having issues with the API don't worry we have you covered. You can reach us in any of the following 
+- Twitter <a href="https://twitter.com/realArafatBen">@realArafatBen</a> 
+- Gmail <a href="mailto:benpaul320@gmail.com">Arafat Benson</a> 
+- Instagram <a href="https://www.instagram.com/realarafatben/">realarafatben</a>
