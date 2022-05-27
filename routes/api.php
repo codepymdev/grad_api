@@ -46,6 +46,8 @@ Route::group(["prefix" => "auth"], function(){
     Route::post("/verify-account", [ForgotPasswordController::class, "verifyAccount"]);
     Route::post("/change-password", [ForgotPasswordController::class, "changePassword"]);
     Route::post("/resend-recovery-code", [ForgotPasswordController::class, "resendRecoveryCode"]);
+
+    Route::get("/data/{id}/{school}", [LoginController::class, "data"]);
 });
 
 Route::group(["prefix" => "people"], function(){

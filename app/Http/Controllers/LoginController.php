@@ -8,6 +8,7 @@ use App\Http\Classes\AppStream;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\LoginResource;
+use Whoops\Handler\JsonResponseHandler;
 
 class LoginController extends Controller
 {
@@ -91,6 +92,7 @@ class LoginController extends Controller
                                 $streamToken = AppStream::generateToken($school ."_".$user->id, $user->first_name .' '. $user->last_name , $user->avatar);
                                 DB::connection($school)->table("users")->where('id', $user->id)->update(['token' => $streamToken ]);
                             }
+
                             return [
                                 "status" => true,
                                 "message" => "success",
@@ -141,5 +143,116 @@ class LoginController extends Controller
     }
 
 
+
+    public function data($id, $school){
+
+        $param = [];
+
+        $user = DB::connection($school)->table("users")->where(["id" => $id])->first();
+        if($user){
+            if($user->type == "student"){
+                $sub = [];
+                $myclassmate = [];
+                $classstudent = DB::connection($school)->table("classstudent")->where(["userId" => $id])->first();
+                $class = getClass($classstudent->classId, $school);
+                $subjects  = unserialize($classstudent->subjects);
+
+                for($i = 0; $i < count($subjects); $i++){
+                    if($subjects[$i] == "null") continue;
+
+                    $sub[$i] = getSubjectName($school, $subjects[$i]);
+                }
+                $classmates = DB::connection($school)->table("classstudent")->where(["classId" => $classstudent->classId])->get()->toArray();
+                foreach ($classmates as $row) {
+                    $myclassmate[] = getUser($row->userId, $school);
+                }
+                $parents = DB::connection($school)->table("parentchild")->get();
+                $parent = [];
+
+                foreach ($parents as $row) {
+                    $children = unserialize($row->children);
+                    if(in_array($id, $children)){
+                        $parent = [
+                            "status" => true ,
+                            "data" => getUser($row->userId, $school),
+                        ];
+                    }else{
+                        $parent = [
+                            "status" => false
+                        ];
+                    }
+                }
+                $teacher = null;
+                $classteacher = DB::connection($school)->table("classteacher")->where(["classId" => $classstudent->classId])->first();
+                if($classteacher){
+                    $teacher = getUser($classteacher->userId, $school);
+                }
+
+                $param = [
+                    "class" => $class,
+                    "subjects" => $sub,
+                    "classmate" => $myclassmate,
+                    "parent" => $parent,
+                    "teacher" => $teacher,
+                ];
+            }
+
+            if($user->type == "teaching"){
+
+            }
+
+            if($user->type == "parent"){
+
+            }
+
+            //set one signal token if null
+            $oneSignalToken = $user->oneSignalToken;
+            if($user->oneSignalToken == null){
+                $oneSignalToken = oneSignalToken($user->id);
+                DB::connection($school)->table("users")->where(["id" => $user->id])->update([
+                    "oneSignalToken" => $oneSignalToken
+                ]);
+            }
+
+            //set stream token if null
+            $streamToken = $user->token;
+            if($user->token == null){
+                $streamToken = AppStream::generateToken($school ."_".$user->id, $user->first_name .' '. $user->last_name , $user->avatar);
+                DB::connection($school)->table("users")->where('id', $user->id)->update(['token' => $streamToken ]);
+            }
+            return new JsonResponseHandler([
+                "status" => true,
+                "message" => "success",
+                "school" => $school,
+                "data" => [
+                    "id" => $user->id,
+                    "school" => $school,
+                    "email" => $user->email,
+                    "reg_no" => $user->reg_no,
+                    "type" => $user->type,
+                    "roleid" => $user->roleId,
+                    "first_name" => $user->first_name,
+                    "last_name" => $user->last_name,
+                    "middle_name" => $user->middle_name,
+                    "gender" => $user->gender,
+                    "tel" => $user->tel,
+                    "avatar" => $user->avatar,
+                    "address" => $user->address,
+                    "city" => $user->city,
+                    "country" => $user->country,
+                    "campus" => $user->campus,
+                    "status" => $user->status,
+                    "rating" => $user->rating,
+                    "token" => $streamToken,
+                    "oneSignalToken" => $oneSignalToken,
+                    "param" => $param,
+                ],
+            ]);
+        }else{
+            return new JsonResponseHandler([
+                'status' => false,
+            ]);
+        }
+    }
 
 }

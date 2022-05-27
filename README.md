@@ -1,64 +1,81 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+<p align="center"><img src="https://grad.fkkas.com/logo-head.png" width="150"></p>
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## About Grad
 
-## About Laravel
+Grad is an API used to communicate with the [Grad Mobile APP](https://grad.com). You can also you the api any application you want but firstly you must send a request mail to <a href="mailto:contact@grad.fkkas.com">Grad Support</a>. 
+### Features
+#
+- Student, Parent, Staff and Admin Login
+- Download Results.
+- View Classes, Subjects, All Users.
+- Live messages
+- Notifications.
+- Events.
+- Announcements.
+- Much more.. 
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## How to use the API 
+To use the api to really simple, you will use our endpoint `https://grad.fkkas.com/api` for all your request. 
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Secondly, after verifiction from our support team you will be gaven a `school name` to uniquely identify your school. E.g: `thelordschool` which is very important because it is used in all your requests. 
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Getting all schools 
+To get all schools you will send a `GET` request using this endpoint `https://grad.fkkas.com/api/schools/` this returns all the schools 
 
-## Learning Laravel
+```json
+[
+    {
+        "id": 1,
+        "name": "First Kingdom kids Academy",
+        "slug": "fkka",
+        "logo": "https://fkkas.com/assets/img/logo.png",
+        "address": "No: 16/45 First Kingdom kids street Mararaba, karu LGA, Nasarawa State",
+        "status": "1",
+        "principal_name": "Nduka Ebubechukwu Ifeanyi",
+        "principal_avatar": "https://fkkas.com/assets/img/teachers/1.jpg",
+        "proprietor_name": "Ifenyinwa Constance Nduka",
+        "proprietor_avatar": "https://fkkas.com/assets/img/teachers/3.jpg",
+        "created_at": "2022-03-05T14:38:59.000000Z",
+        "updated_at": "2022-03-05T14:38:59.000000Z"
+    },
+```
+### Getting active schools  
+To get all active schools you will send a `GET` request using this endpoint `https://grad.fkkas.com/api/schools/active` this returns active the schools 
+```json
+[
+    {
+        "id": 1,
+        "name": "First Kingdom kids Academy",
+        "slug": "fkka",
+        "logo": "https://fkkas.com/assets/img/logo.png",
+        "address": "No: 16/45 First Kingdom kids street Mararaba, karu LGA, Nasarawa State",
+        "status": "1",
+        "principal_name": "Nduka Ebubechukwu Ifeanyi",
+        "principal_avatar": "https://fkkas.com/assets/img/teachers/1.jpg",
+        "proprietor_name": "Ifenyinwa Constance Nduka",
+        "proprietor_avatar": "https://fkkas.com/assets/img/teachers/3.jpg",
+        "created_at": "2022-03-05T14:38:59.000000Z",
+        "updated_at": "2022-03-05T14:38:59.000000Z"
+    },
+```
+### Getting inactive schools  
+To get all inactive schools you will send a `GET` request using this endpoint `https://grad.fkkas.com/api/schools/inactive` this returns inactive the schools 
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Getting data about a particular school 
+To fetch data about a school, you have to pass the ``school slug`` as the endpoint. Example `https://gra.fkkas.com/api/get/thelordsschool` 
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Auth 
+### <center>Login </center>
+To login as user, you will send a `POST` request passing 
+- School `school name`
+- Email Address (Admin, Staffs, Parents) or Student Id (Student)
+- Password 
 
-## Laravel Sponsors
+Using this endpoint `https://grad.fkkas.com/api/auth/login` 
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### <center>Forget Password </center> 
+To recover your password you will send a `POST` request passing the following parameters 
+- Email Address 
+- School `school name` 
+Using this endpoint `https://grad.fkkas.com/api/auth/forgot-password`
 
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
