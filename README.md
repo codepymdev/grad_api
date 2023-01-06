@@ -62,7 +62,7 @@ To get all active schools you will send a `GET` request using this endpoint `htt
 To get all inactive schools you will send a `GET` request using this endpoint `https://grad.fkkas.com/api/schools/inactive` this returns inactive the schools 
 
 ### Getting data about a particular school 
-To fetch data about a school, you have to pass the ``school slug`` as the endpoint. Example `https://gra.fkkas.com/api/get/thelordsschool` 
+To fetch data about a school, you have to pass the ``school slug`` as the endpoint. Example `https://grad.fkkas.com/api/get/thelordsschool` 
 
 ## Auth 
 ### <center>Login </center>
