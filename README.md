@@ -97,6 +97,6 @@ You can also download the Grad mobile app <a href="#">here</a>.
 
 ## Contact 
 Having issues with the API don't worry we have you covered. You can reach us in any of the following 
-- Twitter <a href="https://twitter.com/realArafatBen">@realArafatBen</a> 
+- Twitter <a href="https://twitter.com/bensonarafat">@bensonarafat</a> 
 - Gmail <a href="mailto:benpaul320@gmail.com">Arafat Benson</a> 
 - Instagram <a href="https://www.instagram.com/realarafatben/">realarafatben</a>
